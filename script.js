@@ -302,7 +302,7 @@ const projects = [
         title: 'E-commerce Website',
         category: 'web',
         description: 'Loja online completa com carrinho de compras',
-        image: 'https://via.placeholder.com/400x300/6366f1/ffffff?text=E-commerce',
+        image: 'imagens/ecommerce.png',
         tags: ['HTML', 'CSS', 'JavaScript', 'API'],
         link: 'https://github.com/...',
         longDescription: 'Website de e-commerce completo com sistema de carrinho, checkout, e integração com API de pagamentos. Interface moderna e responsiva.',
@@ -315,7 +315,7 @@ const projects = [
         title: 'App de Tarefas',
         category: 'web',
         description: 'Gestor de tarefas com filtros e categorias',
-        image: 'https://via.placeholder.com/400x300/8b5cf6/ffffff?text=Todo+App',
+        image: 'imagens/taskapp.png',
         tags: ['React', 'CSS', 'LocalStorage'],
         link: 'https://github.com/...',
         longDescription: 'Aplicação de gestão de tarefas com sistema de prioridades, categorias e persistência local.',
@@ -328,7 +328,7 @@ const projects = [
         title: 'Portfolio Designer',
         category: 'design',
         description: 'Portfolio criativo para designer gráfico',
-        image: 'https://via.placeholder.com/400x300/10b981/ffffff?text=Portfolio',
+        image: 'imagens/portefolio.png',
         tags: ['Figma', 'UI/UX', 'Protótipo'],
         link: 'https://figma.com/...',
         longDescription: 'Design de portfolio minimalista e elegante para apresentar trabalhos criativos.',
@@ -341,7 +341,7 @@ const projects = [
         title: 'App Meteorologia',
         category: 'mobile',
         description: 'App mobile para consultar previsão do tempo',
-        image: 'https://via.placeholder.com/400x300/f59e0b/ffffff?text=Weather+App',
+        image: 'imagens/tempo.png',
         tags: ['React Native', 'API', 'Mobile'],
         link: 'https://github.com/...',
         longDescription: 'Aplicação mobile para consultar previsão meteorológica com dados em tempo real.',
@@ -354,7 +354,7 @@ const projects = [
         title: 'Dashboard Analytics',
         category: 'web',
         description: 'Dashboard com gráficos e estatísticas',
-        image: 'https://via.placeholder.com/400x300/ef4444/ffffff?text=Dashboard',
+        image: 'imagens/dashboard.png',
         tags: ['Vue.js', 'Charts', 'API'],
         link: 'https://github.com/...',
         longDescription: 'Dashboard interativo para visualização de dados e analytics com gráficos dinâmicos.',
@@ -367,7 +367,7 @@ const projects = [
         title: 'Redesign Logo Empresa',
         category: 'design',
         description: 'Redesign de identidade visual corporativa',
-        image: 'https://via.placeholder.com/400x300/ec4899/ffffff?text=Logo+Design',
+        image: 'imagens/redesign.png',
         tags: ['Illustrator', 'Branding', 'Logo'],
         link: 'https://behance.net/...',
         longDescription: 'Projeto de redesign completo de identidade visual incluindo logo, cores e tipografia.',
@@ -530,3 +530,106 @@ function renderProjects(projectsToRender) {
         updateCounters();
     }, existingCards.length * 50 + 300);
 }
+
+// ===== SISTEMA DE MODAL =====
+
+function openModal(projectId) {
+    // Encontrar projeto pelo ID
+    const project = projects.find(p => p.id === projectId);
+    
+    if (!project) {
+        console.error('Projeto não encontrado!');
+        return;
+    }
+    
+    // Preencher conteúdo do modal
+    const modalBody = document.getElementById('modal-body');
+    modalBody.innerHTML = `
+        <span class="modal-category">${project.category}</span>
+        <h2>${project.title}</h2>
+        <img src="${project.image}" alt="${project.title}" class="modal-image">
+        
+        <div class="modal-section">
+            <h3>Sobre o Projeto</h3>
+            <p>${project.longDescription}</p>
+        </div>
+        
+        <div class="modal-section">
+            <h3>Funcionalidades</h3>
+            <ul>
+                ${project.features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+        </div>
+        
+        <div class="modal-section">
+            <h3>Tecnologias Utilizadas</h3>
+            <div class="modal-tech">
+                ${project.technologies.map(tech => `<span class="tech-badge">${tech}</span>`).join('')}
+            </div>
+        </div>
+        
+        <a href="${project.link}" target="_blank" class="modal-link">
+            Ver Projeto Completo →
+        </a>
+    `;
+    
+    // Mostrar modal
+    const modal = document.getElementById('project-modal');
+    modal.classList.add('active');
+    
+    // Prevenir scroll do body
+    document.body.style.overflow = 'hidden';
+    
+    console.log(`Modal aberto: ${project.title}`);
+}
+
+function closeModal() {
+    const modal = document.getElementById('project-modal');
+    modal.classList.remove('active');
+    
+    // Restaurar scroll
+    document.body.style.overflow = 'auto';
+    
+    console.log('Modal fechado');
+}
+
+// ===== EVENT LISTENERS DO MODAL =====
+
+function setupModalListeners() {
+    // Event Delegation nos cards
+    const grid = document.getElementById('projects-grid');
+    grid.addEventListener('click', (e) => {
+        const card = e.target.closest('.project-card');
+        if (card) {
+            const projectId = parseInt(card.dataset.id);
+            openModal(projectId);
+        }
+    });
+    
+    // Fechar modal ao clicar no X
+    const closeBtn = document.querySelector('.modal-close');
+    closeBtn.addEventListener('click', closeModal);
+    
+    // Fechar modal ao clicar fora (no overlay)
+    const modal = document.getElementById('project-modal');
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Fechar modal com tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+}
+
+// Adicionar ao DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    renderProjects(projects);
+    setupFilterListeners();
+    setupModalListeners();  // ADICIONAR ESTA LINHA
+    console.log('✅ Modal configurado!');
+});
