@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- HEADER -->
+    
+<!-- HEADER -->
     <header>
         <nav>
             <h1>[Teu Nome]</h1>
@@ -22,7 +23,7 @@
                 <span class="icon-dark">🌙</span>
             </button>
         </nav>
-    </header>
+    </header>    
 
     <!-- HERO / INTRO -->
     <section class="hero">
@@ -43,7 +44,8 @@
         </div>
         <button id="format-toggle" class="format-toggle">12h/24h</button>
     </div>
-      <!-- CONTADOR DE VISITAS -->
+    
+    <!-- CONTADOR DE VISITAS -->
     <div class="visit-counter">
         <p>👋 Visitaste esta página <strong id="visit-count">0</strong> vezes</p>
         <p class="last-visit">Última visita: <span id="last-visit">Primeira vez!</span></p>
@@ -54,14 +56,50 @@
     <!-- PROJETOS -->
     <section id="projects" class="projects">
         <h2>Projetos</h2>
-        <div class="projects-grid">
-            <!-- Cards de projetos vão aqui (dinâmicos mais tarde) -->
-            <article class="project-card">
-                <h3>Projeto 1</h3>
-                <p>Descrição breve...</p>
-            </article>
+     
+    <!-- Barra de controlo (filtros + pesquisa) -->
+    <div class="projects-controls">
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-category="all">
+                Todos <span class="count">0</span>
+            </button>
+            <button class="filter-btn" data-category="web">
+                Web <span class="count">0</span>
+            </button>
+            <button class="filter-btn" data-category="mobile">
+                Mobile <span class="count">0</span>
+            </button>
+            <button class="filter-btn" data-category="design">
+                Design <span class="count">0</span>
+            </button>
         </div>
-    </section>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="🔍 Pesquisar projetos...">
+        </div>
+    </div>
+    
+    <!-- Grid onde os projetos vão aparecer -->
+    <div id="projects-grid" class="projects-grid">
+        <!-- Os cards serão inseridos aqui via JavaScript -->
+    </div>
+    
+    <!-- Mensagem quando não há resultados -->
+    <div id="no-results" class="no-results" style="display: none;">
+        <p>😕 Nenhum projeto encontrado</p>
+    </div>
+</section>
+
+<!-- Modal (fora da secção) -->
+<div id="project-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">×</span>
+        <div id="modal-body">
+            <!-- Conteúdo do modal será inserido aqui -->
+        </div>
+    </div>
+</div>
+
 
     <!-- CONTACTO -->
     <section id="contact" class="contact">
