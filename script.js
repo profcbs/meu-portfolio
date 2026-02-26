@@ -948,22 +948,15 @@ function showToast(type, title, message, duration = 3000) {
     // Criar toast
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        
-${icons[type]}
+    toast.innerHTML = 
+toast.innerHTML = `
+    <div class="toast-icon">${icons[type]}</div>
+    <div class="toast-content">
+        <strong>${title}</strong>
+        <p>${message}</p>
+    </div>
+    <span class="toast-close">×</span>`;
 
-        
-
-            
-${title}
-
-            
-${message}
-
-        
-
-        ×
-    `;
     
     // Adicionar ao container
     container.appendChild(toast);
@@ -985,6 +978,7 @@ ${message}
     
     console.log(`Toast ${type}: ${title}`);
 }
+
 
 // ===== PROCESSAR SUBMIT =====
 
