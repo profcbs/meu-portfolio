@@ -894,11 +894,15 @@ function validateForm() {
 }
 
 // Atualizar estado do botão submit
-function updateSubmitButton() {
-    const submitBtn = document.getElementById('submit-btn');
-    const isValid = validateForm();
-    
-    submitBtn.disabled = !isValid;
+function updateSubmitButton() {     
+    const submitBtn = document.getElementById('submit-btn');     
+    const fields = ['name', 'email', 'subject', 'message', 'phone'];     
+    const valid = fields.every(fieldName => {         
+        const field = document.getElementById(fieldName);         
+        if (!field) return true;         
+        return validateField(fieldName, field.value).valid;     
+    });     
+    submitBtn.disabled = !valid; 
 }
 
 // ===== CONTADOR DE CARACTERES =====
