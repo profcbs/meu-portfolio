@@ -749,3 +749,208 @@ function filterProjects(category) {
     renderProjects(filteredProjects);
     console.log(`Filtro aplicado: ${category} (${filteredProjects.length} projetos)`);
 }
+
+// ===== VALIDAÇÃO DO FORMULÁRIO =====
+
+// Regras de validação
+const validationRules = {
+    name: {
+        required: true,
+        minLength: 3,
+        pattern: /^[a-zA-ZÀ-ÿ\s]+$/,
+        errorMessages: {
+            required: 'Por favor, introduz o teu nome',
+            minLength: 'O nome deve ter pelo menos 3 caracteres',
+            pattern: 'O nome só pode conter letras'
+        }
+    },
+    email: {
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        errorMessages: {
+            required: 'Por favor, introduz o teu email',
+            pattern: 'Por favor, introduz um email válido'
+        }
+    },
+    // Adicionar às regras
+    phone: {
+        required: false,
+        pattern: /^(\+351)?[0-9]{9}$/,
+        errorMessages: {
+        pattern: 'Formato: +351 912345678 ou 912345678'
+        }
+    },
+    subject: {
+        required: true,
+        errorMessages: {
+            required: 'Por favor, seleciona um assunto'
+        }
+    },
+    message: {
+        required: true,
+        minLength: 10,
+        maxLength: 500,
+        errorMessages: {
+            required: 'Por favor, escreve uma mensagem',
+            minLength: 'A mensagem deve ter pelo menos 10 caracteres',
+            maxLength: 'A mensagem não pode ter mais de 500 caracteres'
+        }
+    }
+};
+
+// Validar campo individual
+function validateField(fieldName, value) {
+    const rules = validationRules[fieldName];
+    
+    // Required
+    if (rules.required && !value.trim()) {
+        return {
+            valid: false,
+            message: rules.errorMessages.required
+        };
+    }
+    
+    // Min Length
+    if (rules.minLength && value.trim().length < rules.minLength) {
+        return {
+            valid: false,
+            message: rules.errorMessages.minLength
+        };
+    }
+    
+    // Max Length
+    if (rules.maxLength && value.trim().length > rules.maxLength) {
+        return {
+            valid: false,
+            message: rules.errorMessages.maxLength
+        };
+    }
+    
+    // Pattern (RegEx)
+    if (rules.pattern && !rules.pattern.test(value)) {
+        return {
+            valid: false,
+            message: rules.errorMessages.pattern
+        };
+    }
+    
+    // Válido!
+    return {
+        valid: true,
+        message: ''
+    };
+}
+
+// Mostrar feedback visual
+function showFieldFeedback(fieldName, isValid, message = '') {
+    const formGroup = document.getElementById(fieldName).closest('.form-group');
+    const errorElement = formGroup.querySelector('.error-message');
+    
+    // Remover estados anteriores
+    formGroup.classList.remove('valid', 'invalid');
+    
+    // Adicionar novo estado
+    if (isValid) {
+        formGroup.classList.add('valid');
+        errorElement.textContent = '';
+    } else {
+        formGroup.classList.add('invalid');
+        errorElement.textContent = message;
+    }
+}
+
+// ===== EVENT LISTENERS =====
+
+function setupFormValidation() {
+    const form = document.getElementById('contact-form');
+    const fields = ['name', 'email', 'subject', 'message'];
+    
+    // Validar cada campo ao perder foco (blur)
+    fields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        
+        field.addEventListener('blur', () => {
+            const validation = validateField(fieldName, field.value);
+            showFieldFeedback(fieldName, validation.valid, validation.message);
+            updateSubmitButton();
+        });
+        
+        // Validar enquanto escreve (para limpar erros)
+        field.addEventListener('input', () => {
+            // Só valida se já tinha erro
+            const formGroup = field.closest('.form-group');
+            if (formGroup.classList.contains('invalid')) {
+                const validation = validateField(fieldName, field.value);
+                showFieldFeedback(fieldName, validation.valid, validation.message);
+                updateSubmitButton();
+            }
+        });
+    });
+}
+
+// Validar form inteiro
+function validateForm() {
+    const fields = ['name', 'email', 'subject', 'message'];
+    let isFormValid = true;
+    
+    fields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        const validation = validateField(fieldName, field.value);
+        
+        showFieldFeedback(fieldName, validation.valid, validation.message);
+        
+        if (!validation.valid) {
+            isFormValid = false;
+        }
+    });
+    
+    return isFormValid;
+}
+
+// Atualizar estado do botão submit
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submit-btn');
+    const isValid = validateForm();
+    
+    submitBtn.disabled = !isValid;
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    setupFormValidation();
+    console.log('✅ Validação configurada');
+});
+
+// ===== CONTADOR DE CARACTERES =====
+
+function setupCharCounter() {
+    const messageField = document.getElementById('message');
+    const charCount = document.getElementById('char-count');
+    const counter = document.querySelector('.char-counter');
+    const maxLength = 500;
+    
+    messageField.addEventListener('input', () => {
+        const length = messageField.value.length;
+        charCount.textContent = length;
+        
+        // Remover classes anteriores
+        counter.classList.remove('warning', 'error');
+        
+        // Adicionar warning quando >400 caracteres
+        if (length > 400 && length <= maxLength) {
+            counter.classList.add('warning');
+        }
+        
+        // Adicionar error quando >maxLength
+        if (length > maxLength) {
+            counter.classList.add('error');
+        }
+    });
+}
+
+// Adicionar ao DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    setupFormValidation();
+    setupCharCounter();
+    console.log('✅ Contador de caracteres ativo');
+});
