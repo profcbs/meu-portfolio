@@ -39,6 +39,35 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFooterYear();
     loadSavedTheme();
     console.log('✅ Portfolio inicializado!');
+    loadSavedTheme();
+    startClock();
+    loadClockFormat();
+    startClock();
+    initVisitCounter();
+    renderProjects(projects);
+    console.log('✅ Projetos renderizados!');
+     renderProjects(projects);
+    setupFilterListeners();  // ADICIONAR ESTA LINHA
+    console.log('✅ Filtros configurados!');
+    renderProjects(projects);
+    setupFilterListeners();
+    setupModalListeners();  // ADICIONAR ESTA LINHA
+    console.log('✅ Modal configurado!');
+     renderProjects(projects);
+    setupFilterListeners();
+    setupModalListeners();
+    setupSearchListener();  // ADICIONAR ESTA LINHA
+    console.log('✅ Pesquisa configurada!');
+    setupFormValidation();
+    console.log('✅ Validação configurada');
+    setupFormValidation();
+    setupCharCounter();
+    console.log('✅ Contador de caracteres ativo');
+    setupFormValidation();
+    setupCharCounter();
+    setupFormSubmit();
+    console.log('✅ Form submit configurado');
+
 });
 
 // ===== DARK MODE TOGGLE =====
@@ -76,10 +105,7 @@ function loadSavedTheme() {
     console.log(`Tema carregado: ${savedTheme || 'padrão (light)'}`);
 }
 
-// 4. Executar quando página carrega
-document.addEventListener('DOMContentLoaded', () => {
-    loadSavedTheme();
-});
+
 
 // ===== RELÓGIO DIGITAL =====
 
@@ -134,10 +160,7 @@ function startClock() {
     console.log('⏰ Relógio iniciado!');
 }
 
-// 4. Iniciar quando página carrega
-document.addEventListener('DOMContentLoaded', () => {
-    startClock();
-});
+
 
 // 5. Função para alternar formato
 function toggleFormat() {
@@ -166,11 +189,6 @@ function loadClockFormat() {
     }
 }
 
-// Adicionar ao DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadClockFormat();
-    startClock();
-});
 
 // ===== CONTADOR DE VISITAS =====
 
@@ -260,12 +278,6 @@ function initVisitCounter() {
     
     console.log('📊 Contador de visitas inicializado!');
 }
-
-// 7. Executar quando página carrega
-document.addEventListener('DOMContentLoaded', () => {
-    initVisitCounter();
-    // ... outras inicializações
-});
 
 // 8. Função para resetar contador
 function resetVisitCounter() {
@@ -443,11 +455,7 @@ function updateCounters() {
     document.querySelector('[data-category="design"] .count').textContent = designCount;
 }
 
-// Inicializar ao carregar página
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects(projects);
-    console.log('✅ Projetos renderizados!');
-});
+
 
 // ===== SISTEMA DE FILTROS =====
 
@@ -490,13 +498,6 @@ function setupFilterListeners() {
         });
     });
 }
-
-// Adicionar ao DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects(projects);
-    setupFilterListeners();  // ADICIONAR ESTA LINHA
-    console.log('✅ Filtros configurados!');
-});
 
 // Versão com animação de saída
 function renderProjects(projectsToRender) {
@@ -626,14 +627,6 @@ function setupModalListeners() {
     });
 }
 
-// Adicionar ao DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects(projects);
-    setupFilterListeners();
-    setupModalListeners();  // ADICIONAR ESTA LINHA
-    console.log('✅ Modal configurado!');
-});
-
 // ===== SISTEMA DE PESQUISA =====
 
 function searchProjects(query) {
@@ -689,15 +682,6 @@ function setupSearchListener() {
         }
     });
 }
-
-// Adicionar ao DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    renderProjects(projects);
-    setupFilterListeners();
-    setupModalListeners();
-    setupSearchListener();  // ADICIONAR ESTA LINHA
-    console.log('✅ Pesquisa configurada!');
-});
 
 // ===== DEBOUNCE PARA PESQUISA =====
 
@@ -772,7 +756,6 @@ const validationRules = {
             pattern: 'Por favor, introduz um email válido'
         }
     },
-    // Adicionar às regras
     phone: {
         required: false,
         pattern: /^(\+351)?[0-9]{9}$/,
@@ -915,12 +898,6 @@ function updateSubmitButton() {
     submitBtn.disabled = !isValid;
 }
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', () => {
-    setupFormValidation();
-    console.log('✅ Validação configurada');
-});
-
 // ===== CONTADOR DE CARACTERES =====
 
 function setupCharCounter() {
@@ -948,9 +925,112 @@ function setupCharCounter() {
     });
 }
 
-// Adicionar ao DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    setupFormValidation();
-    setupCharCounter();
-    console.log('✅ Contador de caracteres ativo');
-});
+// ===== TOAST NOTIFICATIONS =====
+
+function showToast(type, title, message, duration = 3000) {
+    const container = document.getElementById('toast-container');
+    
+    // Ícones por tipo
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    // Criar toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        
+${icons[type]}
+
+        
+
+            
+${title}
+
+            
+${message}
+
+        
+
+        ×
+    `;
+    
+    // Adicionar ao container
+    container.appendChild(toast);
+    
+    // Close button
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+        toast.style.animation = 'fadeOut 0.4s ease forwards';
+        setTimeout(() => toast.remove(), 400);
+    });
+    
+    // Auto-remove após duration
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'fadeOut 0.4s ease forwards';
+            setTimeout(() => toast.remove(), 400);
+        }
+    }, duration);
+    
+    console.log(`Toast ${type}: ${title}`);
+}
+
+// ===== PROCESSAR SUBMIT =====
+
+function setupFormSubmit() {
+    const form = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Validar form final
+        if (!validateForm()) {
+            showToast('error', 'Erro!', 'Por favor, corrige os erros no formulário');
+            return;
+        }
+        
+        // Desativar botão e mostrar loading
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        
+        // Simular envio (depois vamos guardar em localStorage)
+        try {
+            // Simular delay de rede
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Sucesso!
+            showToast(
+                'success',
+                'Mensagem Enviada!',
+                'Obrigado pelo contacto. Respondo em breve!'
+            );
+            
+            // Limpar formulário
+            form.reset();
+            
+            // Remover estados de validação
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('valid', 'invalid');
+            });
+            
+            // Resetar contador
+            document.getElementById('char-count').textContent = '0';
+            
+        } catch (error) {
+            showToast(
+                'error',
+                'Erro ao Enviar',
+                'Ocorreu um erro. Tenta novamente.'
+            );
+        } finally {
+            // Reativar botão e remover loading
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+        }
+    });
+}
