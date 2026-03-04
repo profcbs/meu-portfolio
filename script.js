@@ -948,8 +948,8 @@ function showToast(type, title, message, duration = 3000) {
     // Criar toast
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.innerHTML = 
-toast.innerHTML = `
+    //toast.innerHTML = 
+    toast.innerHTML = `
     <div class="toast-icon">${icons[type]}</div>
     <div class="toast-content">
         <strong>${title}</strong>
@@ -986,84 +986,7 @@ function setupFormSubmit() {
     const form = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
     
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // Validar form final
-        if (!validateForm()) {
-            showToast('error', 'Erro!', 'Por favor, corrige os erros no formulário');
-            return;
-        }
-        
-        // Desativar botão e mostrar loading
-        submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
-        
-        // Simular envio (depois vamos guardar em localStorage)
-        try {
-            // Simular delay de rede
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Sucesso!
-            showToast(
-                'success',
-                'Mensagem Enviada!',
-                'Obrigado pelo contacto. Respondo em breve!'
-            );
-            
-            // Limpar formulário
-            form.reset();
-            
-            // Remover estados de validação
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('valid', 'invalid');
-            });
-            
-            // Resetar contador
-            document.getElementById('char-count').textContent = '0';
-            
-        } catch (error) {
-            showToast(
-                'error',
-                'Erro ao Enviar',
-                'Ocorreu um erro. Tenta novamente.'
-            );
-        } finally {
-            // Reativar botão e remover loading
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('loading');
-        }
-    });
-}
-
-// ===== GUARDAR MENSAGENS =====
-
-function saveMessage(formData) {
-    // Obter mensagens existentes
-    const messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
-    
-    // Criar nova mensagem
-    const message = {
-        id: Date.now(),
-        name: formData.get('name'),
-        email: formData.get('email'),
-        subject: formData.get('subject'),
-        message: formData.get('message'),
-        date: new Date().toISOString(),
-        read: false
-    };
-    
-    // Adicionar ao array
-    messages.unshift(message); // unshift adiciona ao início
-    
-    // Guardar de volta
-    localStorage.setItem('contactMessages', JSON.stringify(messages));
-    
-    console.log('💾 Mensagem guardada:', message);
-    return message;
-}
-
-// Atualizar função de submit
+    // Atualizar função de submit
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -1099,6 +1022,36 @@ form.addEventListener('submit', async (e) => {
     }
 });
 
+}
+
+// ===== GUARDAR MENSAGENS =====
+
+function saveMessage(formData) {
+    // Obter mensagens existentes
+    const messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
+    
+    // Criar nova mensagem
+    const message = {
+        id: Date.now(),
+        name: formData.get('name'),
+        email: formData.get('email'),
+        subject: formData.get('subject'),
+        message: formData.get('message'),
+        date: new Date().toISOString(),
+        read: false
+    };
+    
+    // Adicionar ao array
+    messages.unshift(message); // unshift adiciona ao início
+    
+    // Guardar de volta
+    localStorage.setItem('contactMessages', JSON.stringify(messages));
+    
+    console.log('💾 Mensagem guardada:', message);
+    return message;
+}
+
+
 // ===== ADMIN VIEW =====
 
 function loadMessages() {
@@ -1132,47 +1085,28 @@ function loadMessages() {
     
     // Renderizar mensagens
     messagesList.innerHTML = messages.map(msg => `
-        
+    <div class="message-card">
+        <div class="message-header"> 
+        <div class="message-sender">
+            <h4>${msg.name}</h4>
+            <p>${msg.email}</p>
+            <p class="message-phone">${msg.phone}</p>
+        </div>
+        </div>
+        <div class="message-meta">
+            <div>${new Date(msg.date).toLocaleDateString('pt-PT')}</div>
+        </div>
+            <span class="message-subject">${msg.subject}</span>
+            <div class="message-body">${msg.message}</div>
+            <div class="message-actions">
+                <button class="btn-delete" data-id="${msg.id}">🗑️ Eliminar</button>
+            </div>
+    </div>`).join('');
 
-            
-
-                
-
-                    
-${msg.name}
-
-                    
-${msg.email}
-
-
-                
-
-                
-
-                    
-${new Date(msg.date).toLocaleDateString('pt-PT')}
-
-                    
-${new Date(msg.date).toLocaleTimeString('pt-PT')}
-
-                
-
-            
-
-            ${msg.subject}
-            
-${msg.message}
-
-            
-
-                
-                    🗑️ Eliminar
-                
-            
-
-        
-
-    `).join('');
+    // Liga os botões de eliminar (após inserir o HTML)
+    list.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => deleteMessage(parseInt(btn.dataset.id)));
+    });
 }
 
 function deleteMessage(id) {
@@ -1215,4 +1149,5 @@ function setupAdminToggle() {
 // Limpar todas
 document.getElementById('clear-messages')?.addEventListener('click', clearAllMessages);
 
-
+//eliminar uma mensagem
+//document.getElementById('btn-delete')?.addEventListener('click', deleteMessage);
