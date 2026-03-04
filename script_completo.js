@@ -1732,4 +1732,282 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMessages();        // Carrega o badge com mensagens não lidas
 
     console.log('✅ Portfolio totalmente carregado!');
+    initGitHubStats();
 });
+
+// ===== FETCH COM ASYNC/AWAIT (MODERNA - RECOMENDADA) =====
+
+async function buscarDados() {
+    try {
+        const response = await fetch('https://api.github.com/users/github');
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+buscarDados();
+
+// ===== PRIMEIRO FETCH - TESTE =====
+
+async function testarFetch() {
+    console.log('🚀 Iniciando fetch...');
+    
+    try {
+        // 1. Fazer o pedido
+        const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+        
+        // 2. Verificar se resposta é OK (status 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // 3. Parsear JSON
+        const data = await response.json();
+        
+        // 4. Usar os dados
+        console.log('✅ Dados recebidos:', data);
+        console.log('Nome:', data.name);
+        console.log('Email:', data.email);
+        console.log('Cidade:', data.address.city);
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Erro ao buscar dados:', error);
+    }
+}
+
+// Testar no console
+testarFetch();
+
+// ===== MOSTRAR DADOS NO DOM =====
+
+async function buscarEMostrar() {
+    const resultDiv = document.getElementById('result');
+    const btn = document.getElementById('fetch-btn');
+    
+    // Loading state
+    btn.disabled = true;
+    btn.textContent = 'Carregando...';
+    resultDiv.innerHTML = '<p>⏳ A buscar dados...</p>';
+    
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP! status: ${response.status}`);
+        }
+        
+        const user = await response.json();
+        
+        // Mostrar dados
+        resultDiv.innerHTML = `
+            <div class="user-card">
+                <h3>${user.name}</h3>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Cidade:</strong> ${user.address.city}</p>
+                <p><strong>Website:</strong> ${user.website}</p>
+            </div>
+        `;
+        
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div class="error">
+                <p>❌ Erro ao buscar dados</p>
+                <p>${error.message}</p>
+            </div>
+        `;
+    } finally {
+        // Sempre executado
+        btn.disabled = false;
+        btn.textContent = 'Buscar Dados';
+    }
+}
+
+// Event listener
+document.getElementById('fetch-btn')?.addEventListener('click', buscarEMostrar);
+
+// const response = await fetch(url);
+
+// response.ok        // true se status 200-299
+// response.status    // Código status (200, 404, 500, etc)
+// response.json()    // Parsear corpo como JSON
+// response.text()    // Parsear corpo como texto
+
+// ===== GITHUB API INTEGRATION =====
+
+const GITHUB_USERNAME = 'profcbs'; // ALTERAR PARA O TEU USERNAME!
+
+
+
+// Atualizar stats no DOM
+function updateGitHubStats(userData) {
+    document.getElementById('repos-count').textContent = userData.public_repos;
+    document.getElementById('followers-count').textContent = userData.followers;
+    document.getElementById('following-count').textContent = userData.following;
+    
+    // Remover classe loading
+    document.querySelectorAll('.stat-value').forEach(el => {
+        el.classList.remove('loading');
+    });
+}
+
+// Buscar repositórios do utilizador
+async function fetchGitHubRepos() {
+    try {
+        const response = await fetch(
+            `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=stars&per_page=6`
+        );
+        
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+        
+        const repos = await response.json();
+        
+        console.log('✅ GitHub repos:', repos);
+        return repos;
+        
+    } catch (error) {
+        console.error('❌ Erro ao buscar repos:', error);
+        throw error;
+    }
+}
+
+// Calcular total de stars
+async function calculateTotalStars() {
+    try {
+        const repos = await fetchGitHubRepos();
+        const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+        
+        document.getElementById('stars-count').textContent = totalStars;
+        
+        return repos;
+    } catch (error) {
+        document.getElementById('stars-count').textContent = '0';
+        throw error;
+    }
+}
+
+// Renderizar repositórios
+function renderRepos(repos) {
+    const grid = document.getElementById('repos-grid');
+    
+    grid.innerHTML = repos.map(repo => `
+             
+📦
+
+                
+
+                    
+${repo.name}
+
+                
+
+            
+
+            
+
+                ${repo.description || 'Sem descrição'}
+            
+
+
+            
+
+                ⭐ ${repo.stargazers_count}
+                🔀 ${repo.forks_count}
+            
+
+            ${repo.language ? `${repo.language}` : ''}
+        
+
+    `).join('');
+}
+
+// ===== INICIALIZAR GITHUB STATS =====
+
+async function initGitHubStats() {
+    console.log('🐙 Carregando GitHub stats...');
+    
+    try {
+        // Buscar dados em paralelo
+        const [userData, repos] = await Promise.all([
+            fetchGitHubUserData(),
+            calculateTotalStars()
+        ]);
+        
+        // Atualizar UI
+        updateGitHubStats(userData);
+        renderRepos(repos);
+        
+        console.log('✅ GitHub stats carregados!');
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar GitHub stats');
+        // Mostrar erro na UI
+        document.querySelectorAll('.stat-value').forEach(el => {
+            el.textContent = '--';
+            el.classList.remove('loading');
+        });
+    }
+}
+
+// ===== CACHE SIMPLES =====
+
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
+
+function getCachedData(key) {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const { data, timestamp } = JSON.parse(cached);
+    const now = Date.now();
+    
+    // Verificar se cache ainda é válido
+    if (now - timestamp < CACHE_DURATION) {
+        console.log(`✅ Usando cache para ${key}`);
+        return data;
+    }
+    
+    // Cache expirado
+    localStorage.removeItem(key);
+    return null;
+}
+
+function setCachedData(key, data) {
+    const cacheObj = {
+        data,
+        timestamp: Date.now()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheObj));
+}
+
+// Atualizar fetchGitHubUserData para usar cache
+async function fetchGitHubUserData() {
+    const cacheKey = `github_user_${GITHUB_USERNAME}`;
+    
+    // Tentar obter do cache primeiro
+    const cached = getCachedData(cacheKey);
+    if (cached) return cached;
+    
+    // Se não tem cache, buscar da API
+    try {
+        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`);
+        
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Guardar no cache
+        setCachedData(cacheKey, data);
+        
+        return data;
+    } catch (error) {
+        console.error('❌ Erro ao buscar GitHub user:', error);
+        throw error;
+    }
+}

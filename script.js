@@ -1110,6 +1110,7 @@ function loadMessages() {
 }
 
 function deleteMessage(id) {
+    console.log('entrou aqui!');
     if (!confirm('Eliminar esta mensagem?')) return;
     
     let messages = JSON.parse(localStorage.getItem('contactMessages')) || [];
@@ -1148,6 +1149,3 @@ function setupAdminToggle() {
 
 // Limpar todas
 document.getElementById('clear-messages')?.addEventListener('click', clearAllMessages);
-
-//eliminar uma mensagem
-//document.getElementById('btn-delete')?.addEventListener('click', deleteMessage);

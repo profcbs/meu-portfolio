@@ -267,6 +267,62 @@
     <span class="badge" id="unread-badge" style="display: none;">0</span>
 </button>
 
+<!-- HTML para teste -->
+<section class="api-test">
+    <h2>🧪 Teste de API</h2>
+    <button id="fetch-btn">Buscar Dados</button>
+    <div id="result" class="result"></div>
+</section>
+
+<section id="github-stats" class="github-stats">
+    <div class="section-header">
+        <h2>🐙 GitHub Stats</h2>
+        <p>Os meus projetos open-source</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value" id="repos-count">--</div>
+            <div class="stat-label">Repositórios</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="stars-count">--</div>
+            <div class="stat-label">Stars Totais</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="followers-count">--</div>
+            <div class="stat-label">Followers</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🔀</div>
+            <div class="stat-value" id="following-count">--</div>
+            <div class="stat-label">Following</div>
+        </div>
+    </div>
+
+    <!-- Repositórios Populares -->
+    <div class="repos-section">
+        <h3>📌 Repositórios Populares</h3>
+        <div id="repos-grid" class="repos-grid">
+            <!-- Repos serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Link para GitHub -->
+    <div class="github-link">
+        <a href="https://github.com/profcbs" target="_blank" class="btn-github">
+            Ver Todos no GitHub →
+        </a>
+    </div>
+</section>
+
     <!-- FOOTER -->
     <footer>
         <p>© <span id="year"></span> [Teu Nome]. Feito com ❤️ e ☕</p>
@@ -274,6 +330,6 @@
 
     <div id="toast-container" class="toast-container"></div>
     
-    <script src="script.js"></script>
+    <script src="script_completo.js"></script>
 </body>
 </html>
